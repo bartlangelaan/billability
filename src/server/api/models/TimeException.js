@@ -4,7 +4,6 @@ const Schema = mongoose.Schema;
 export default mongoose.model('TimeException', new Schema({
   profileId: {
     type: String,
-    unique: true,
     required: true,
   },
   employee: {
