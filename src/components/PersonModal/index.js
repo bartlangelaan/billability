@@ -14,7 +14,7 @@ export default class extends Component {
       >
         <h2>{person.EmployeeFullName}</h2>
         <h3>Hours a week exceptions</h3>
-        <TimeExceptoinsForm exceptions={store.timeExceptions.filter(ex => ex.employee == person.Employee)} employee={person.Employee}/>
+        <TimeExceptoinsForm exceptions={store.timeExceptions.filter(ex => ex.employee === person.ID)} employee={person.ID}/>
       </Modal>
     )
   }
