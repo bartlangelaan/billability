@@ -11,6 +11,7 @@ const TimeExceptionsForm = ({exceptions, employee}) => {
   <Form
     onSubmit={values => fetch('api/data/timeExceptions', {
       method: 'POST',
+      credentials: 'same-origin',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -48,6 +49,6 @@ const TimeExceptionsForm = ({exceptions, employee}) => {
     }}
   </Form>
   )
-}
+};
 
 export default TimeExceptionsForm;
