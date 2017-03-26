@@ -19,6 +19,8 @@ const clientAssets = require(KYT.ASSETS_MANIFEST); // eslint-disable-line import
 const port = parseInt(process.env.PORT || KYT.SERVER_PORT, 10);
 const app = express();
 
+app.enable("trust proxy");
+
 // Compress (gzip) assets in production.
 app.use(compression());
 
