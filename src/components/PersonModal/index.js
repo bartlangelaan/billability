@@ -6,7 +6,6 @@ import store from '../data';
 export default class extends Component {
 
   render() {
-    console.log(store.data.timeExceptions);
     const person = this.props.person.data;
     return (
       <Modal
@@ -15,7 +14,7 @@ export default class extends Component {
       >
         <h2>{person.EmployeeFullName}</h2>
         <h3>Hours a week exceptions</h3>
-        <TimeExceptoinsForm exceptions={store.data.timeExceptions.filter(ex => ex.employee == person.Employee)} employee={person.Employee}/>
+        <TimeExceptoinsForm exceptions={store.timeExceptions.filter(ex => ex.employee == person.Employee)} employee={person.Employee}/>
       </Modal>
     )
   }
