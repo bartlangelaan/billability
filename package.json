@@ -61,5 +61,8 @@
     "heroku-postbuild": "npm run build"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "engines": {
+    "node": "7.x"
+  }
 }
