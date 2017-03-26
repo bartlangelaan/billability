@@ -51,6 +51,10 @@ app.get(
     failureRedirect: '/login'
   })
 );
+app.get('/logout', function(req, res){
+  req.logout();
+  res.redirect('/');
+});
 
 app.use((req, res, next) => {
   if (req.isAuthenticated()) { return next(); }

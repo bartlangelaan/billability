@@ -7,7 +7,7 @@ function Home() {
   return (
     <section>
       <p className={styles.paragraph}>
-        <a href="/api/refresh">Refresh!</a>
+        <a href="/api/refresh">Refresh data from Exact Online</a> - <a href="/logout">Log out</a>
       </p>
       <Billability />
     </section>
