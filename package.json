@@ -57,7 +57,8 @@
     "lint": "npm run lint-script && npm run lint-style",
     "lint-script": "kyt lint-script",
     "lint-style": "kyt lint-style",
-    "kyt:help": "kyt --help"
+    "kyt:help": "kyt --help",
+    "heroku-postbuild": "npm run build"
   },
   "author": "",
   "license": "ISC"
