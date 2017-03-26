@@ -3,7 +3,7 @@ import calculate from './calculate';
 import mongoose from 'mongoose';
 import Data from './models/Data';
 import TimeException from './models/TimeException';
-mongoose.connect('mongodb://localhost/billability');
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/billability');
 mongoose.Promise = Promise;
 
 const router = express.Router();
