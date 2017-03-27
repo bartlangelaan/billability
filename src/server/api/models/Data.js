@@ -12,5 +12,6 @@ export default mongoose.model('Data', new Schema({
   TimeTransactions: Schema.Types.Mixed,
   Employees: Schema.Types.Mixed,
   Projects: Schema.Types.Mixed,
-  Items: Schema.Types.Mixed
+  Items: Schema.Types.Mixed,
+  weeks: Schema.Types.Mixed
 }));

@@ -12,7 +12,7 @@ router.get('/refresh', calculate);
 
 router.get('/data', async (req, res) => {
   const profileId = req.user.profile.id;
-  const data = await Data.findOne({ profileId: profileId + '-new' }).exec();
+  const data = await Data.findOne({ profileId: profileId}).exec();
   const timeExceptions = await TimeException.find().exec();
   res.json({
     timeExceptions: timeExceptions.map(e => e.toObject()),

@@ -1,20 +1,14 @@
 
 import React, { PropTypes } from 'react';
-import Link from 'react-router/lib/Link';
-import styles from './styles.scss';
+import Billability from '../Billability';
 
-function App({ children }) {
+function App() {
   return (
     <div>
-      <div className={styles.content}>
-        {children}
-      </div>
+      <a href="/api/refresh">Refresh data from Exact Online</a> - <a href="/logout">Log out</a>
+      <Billability />
     </div>
   );
 }
-
-App.propTypes = {
-  children: PropTypes.node,
-};
 
 export default App;

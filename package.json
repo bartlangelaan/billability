@@ -44,6 +44,8 @@
     "babel-watch": "^2.0.6",
     "dotenv": "^4.0.0",
     "enzyme": "^2.4.1",
+    "html-webpack-plugin": "^2.28.0",
+    "http-proxy-middleware": "^0.17.4",
     "react-addons-test-utils": "^15.3.0",
     "webpack": "^2.2.1"
   },

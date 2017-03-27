@@ -16,13 +16,11 @@ export function refreshData() {
 
     console.debug('Data recieved:', newData);
 
+    newData.Employees.forEach(employee => Object.keys(employee.timeTransactions).forEach(week => {
+      employee.timeTransactions[week] = employee.timeTransactions[week].map(tt => new TimeTransaction(tt));
+    }));
+
     newData.Employees = newData.Employees.map(e => new Employee(e));
-
-    newData.TimeTransactions = newData.TimeTransactions.map(tt => new TimeTransaction(tt));
-
-    newData.Projects = new Map(newData.Projects.map(p => [p.ID, p]));
-
-    newData.weeks = Array.from(new Set(newData.TimeTransactions.map(tt => tt.week)));
 
     Object.assign(data, newData);
 
