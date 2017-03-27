@@ -5,10 +5,7 @@ import PersonModal from '../PersonModal';
 import {BILLABILITY_TYPE, GROUP_TYPES} from '../const';
 import data, {refreshData} from '../data';
 import settings from '../settings';
-
-if (KYT.TYPE == 'client') {
-  require('!style!css!postcss!react-table/react-table.css');
-}
+import '!style!css!postcss!react-table/react-table.css';
 
 const sum = arr => arr.reduce((p, c) => p + c, 0);
 
@@ -138,7 +135,7 @@ const BillabilityNumber = ({row, value, aggregated}) => {
 
   const title = `Billable ${value.billability * 100} % of ${value.totalTime} hours\n` + value.transactionBillabilities.map(tb => {
 
-    const project = data.Projects.get(tb.transaction.data.Project);
+    const project = tb.transaction.project;
 
     // Billability rate
     return (variableBillabilities ?

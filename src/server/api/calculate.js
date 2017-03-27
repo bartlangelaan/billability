@@ -1,5 +1,6 @@
 import Data from './models/Data';
 import { get } from '../ExactOnline';
+import weekNumber from 'current-week-number';
 
 function parseDate(datestring) {
   if(!datestring) return null;
@@ -168,73 +169,45 @@ export default async function(req, res) {
     });
 
     /**
+     * Format it so it's easily parsed in the front-end
+     */
+
+    // Add week
+    TimeTransactions.forEach(tt => {
+      const date = new Date(tt.Date);
+      const week = weekNumber(date);
+      const year = date.getFullYear();
+      tt.week = `${week === 53 && date.getMonth() === 0 ? year - 1 : year}-${week.toString().padStart(2, "0")}`;
+    });
+
+    // Find all weeks
+    const weeks = Array.from(new Set(TimeTransactions.map(tt => tt.week)));
+
+    // Bundle TimeTransactions for each Employee for each week
+    Employees.forEach(employee => {
+      employee.timeTransactions = {};
+      weeks.forEach(week => {
+        employee.timeTransactions[week] = TimeTransactions.filter(tt => tt.week === week && tt.Employee === employee.ID);
+      })
+    });
+
+    const ProjectsById = {};
+
+    Projects.forEach(project => ProjectsById[project.ID] = project);
+
+    /**
      * Save all the data!
      */
 
-    const profileId = req.user.profile.id+'-new';
+    const profileId = req.user.profile.id;
 
-    console.log({profileId});
-
-    const data = new Data({profileId, TimeTransactions, Employees, Projects, Items});
+    const data = new Data({profileId, Employees, Projects: ProjectsById, Items, weeks});
 
     await Data.remove({ profileId }).exec();
 
     await data.save();
-
-    //res.json(data);
-    return;
-
-
-
-
-
-
-
-
-
-
-    /**
-     * OLD CODE
-     */
-
-    // const api = new ExactOnlineAPI(req.user.accessToken, req.user.profile.currentDivision);
-    //
-    // console.log('Getting all employees..');
-    // const employees = await api.getEmployees();
-    // console.log(`Recieved ${employees.length} employees.\n`);
-    //
-    // console.log('Getting time transactions for all employees..');
-    // await Promise.all(employees.map(async (employee) => {
-    //   employee.timeTransactions = await api.getTimeTransactionsForEmployee(employee.Employee);
-    // }));
-    // console.log(`Recieved ${employees.reduce((p, e) => p + e.timeTransactions.length, 0)} time transactions.\n`);
-    //
-    // const projectsToGet = [];
-    // employees.forEach(employee => employee.timeTransactions.forEach(timeEntry => {
-    //   if (!projectsToGet.includes(timeEntry.Project)) projectsToGet.push(timeEntry.Project);
-    // }));
-    // console.log(`Getting ${projectsToGet.length} projects..`);
-    //
-    // const projects = {};
-    // await Promise.all(projectsToGet.map(async (project) => {
-    //   projects[project] = await api.getProject(project)
-    // }));
-    //
-    // console.log(`Recieved all projects.\n`);
-    //
-    // console.log('Writing all results to database..');
-    //
-    // const profileId = req.user.profile.id;
-    //
-    // const data = new Data({projects, employees, profileId});
-    //
-    // await Data.remove({ profileId }).exec();
-    //
-    // await data.save();
-
   }
   catch (error) {
     console.error(error);
-    res.send(error.message);
   }
 }

@@ -8,7 +8,7 @@ class Employee {
 
   maxHours(week = '0000-00', totalQuantityThisWeek) {
     const timeException = data.timeExceptions.find(timeException => (
-        timeException.employee == this.data.ID
+        timeException.employee === this.data.ID
       &&
         (timeException.from ? timeException.from <= week : true)
       &&
@@ -21,13 +21,13 @@ class Employee {
 
   billability(week) {
 
-    const transactions = data.TimeTransactions.filter(tt => tt.data.Employee == this.data.ID && tt.week == week);
+    const transactions = this.data.timeTransactions[week];
 
     const transactionBillabilities = transactions.map(transaction => ({
       billability: transaction.billability(),
       quantity: transaction.data.Quantity,
       transaction
-    })).sort((t1, t2) => (t1.billability != t2.billability) ? (t1.billability - t2.billability) : (t2.quantity - t1.quantity));
+    })).sort((t1, t2) => (t1.billability !== t2.billability) ? (t1.billability - t2.billability) : (t2.quantity - t1.quantity));
 
     const billableTime = transactionBillabilities.reduce((sum, transaction) => sum + (transaction.billability * transaction.quantity), 0);
 
@@ -35,7 +35,7 @@ class Employee {
 
     let billable = billableTime / totalTime;
 
-    if(isNaN(billable) || billable == Infinity) {
+    if(isNaN(billable) || billable === Infinity) {
       billable = 1;
     }
 
