@@ -62,7 +62,7 @@ app.get('/user', (req, res) => {
 app.use('/api', api);
 
 // On development, proxy the client-only code.
-if(KYT.PUBLIC_PATH){
+if(KYT.PUBLIC_PATH !== '/'){
   const proxy = require('http-proxy-middleware');
   app.use('*', proxy(KYT.PUBLIC_PATH));
 }
