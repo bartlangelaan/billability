@@ -50,15 +50,6 @@ app.get('/logout', function(req, res){
   res.redirect('/');
 });
 
-app.use((req, res, next) => {
-  if (req.isAuthenticated()) { return next(); }
-  res.redirect('/login');
-});
-
-app.get('/user', (req, res) => {
-  res.json(req.user);
-});
-
 app.use('/api', api);
 
 // On development, proxy the client-only code.

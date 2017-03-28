@@ -28,6 +28,9 @@ class App extends Component {
     if(s === REFRESH_STEPS.NOT_LOADED_YET) {
       result = 'Recieving data..';
     }
+    else if(s === REFRESH_STEPS.NOT_AUTHENTICATED) {
+      result = <div>Not logged in! <a href="/login">Click here to login</a></div>
+    }
     else if(s === REFRESH_STEPS.ERROR) {
       result = <div>
         <h3>Error loading Exact Online data (error {data.stats.error.statusCode})</h3>

@@ -21,4 +21,5 @@ export const REFRESH_STEPS = {
   DONE: 6,
   ERROR: -1,
   NOT_LOADED_YET: 99,
+  NOT_AUTHENTICATED: 98,
 };
