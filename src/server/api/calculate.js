@@ -1,13 +1,14 @@
 import Data from './models/Data';
 import { get } from '../ExactOnline';
 import weekNumber from 'current-week-number';
+import { REFRESH_STEPS } from '../../components/const'
 
 function parseDate(datestring) {
   if(!datestring) return null;
   return parseInt(datestring.substr(6, 13))
 }
 
-async function getAll(firstUrl, token) {
+async function getAll(firstUrl, token, progress) {
   const results = [];
   let nextUrl = firstUrl;
   let i = 0;
@@ -25,11 +26,26 @@ async function getAll(firstUrl, token) {
     nextUrl = response.d.__next;
 
     i++;
+
+    if(typeof progress === 'function') progress(results.length);
   }
   return results;
 }
 
 export default async function(req, res) {
+
+  /**
+   * Save all the data!
+   */
+
+  const profileId = req.user.profile.id;
+
+  const data = new Data({profileId, state: REFRESH_STEPS.INIT, stats: {} });
+
+  await Data.remove({ profileId }).exec();
+
+  await data.save();
+
   res.redirect('/');
   try {
 
@@ -49,9 +65,13 @@ export default async function(req, res) {
 
     const Items = {};
 
+    data.state = REFRESH_STEPS.LOADING_TIME_TRANSACTIONS;
+    await data.save();
+
     const TimeTransactions = (await getAll(
       BASE_URL + '/project/TimeTransactions?$select=Date,Employee,Item,ItemDescription,Notes,PriceFC,Project,Quantity',
-      TOKEN
+      TOKEN,
+      progress => {data.stats.timeTransactionsLoaded = progress; data.save();},
     )).map(timetransaction => {
       delete timetransaction.__metadata;
       Items[timetransaction.Item] = timetransaction.ItemDescription;
@@ -60,8 +80,6 @@ export default async function(req, res) {
       return timetransaction;
     }).sort((tt1, tt2) => tt1.Date - tt2.Date);
 
-    console.log(`All ${TimeTransactions.length} TimeTransactions recieved.\n`);
-
 
     /**
      * Get all active employments.
@@ -69,16 +87,19 @@ export default async function(req, res) {
      * Employee: [EmployeeID]
      * ScheduleAverageHours: 32
      */
-    console.log(`Getting all Active Employments..`);
 
-    const ActiveEmployments = await getAll(`${BASE_URL}/payroll/ActiveEmployments?$select=Employee,ScheduleAverageHours`, TOKEN);
+    data.state = REFRESH_STEPS.LOADING_ACTIVE_EMPLOYMENTS;
+    await data.save();
+
+    const ActiveEmployments = await getAll(
+      `${BASE_URL}/payroll/ActiveEmployments?$select=Employee,ScheduleAverageHours`,
+      TOKEN,
+      progress => {data.stats.activeEmploymentsLoaded = progress; data.save();},
+    );
 
     ActiveEmployments.forEach(employment => {
       delete employment.__metadata
     });
-
-    console.log(`Recieved ${ActiveEmployments.length} employments.\n`)
-
 
     /**
      * Get all employees.
@@ -87,16 +108,19 @@ export default async function(req, res) {
      * FirstName: 'Bart'
      * FullName: 'Bart Langelaan'
      */
-    console.log('Getting all employees..');
+    data.state = REFRESH_STEPS.LOADING_EMPLOYEES;
+    await data.save();
 
-    const Employees = (await getAll(`${BASE_URL}/payroll/Employees?$select=ID,FirstName,FullName`, TOKEN)).map(employee => {
+    const Employees = (await getAll(
+      `${BASE_URL}/payroll/Employees?$select=ID,FirstName,FullName`,
+      TOKEN,
+      progress => {data.stats.employeesLoaded = progress; data.save();},
+    )).map(employee => {
       delete employee.__metadata;
       const employment = ActiveEmployments.find(employment => employment.Employee == employee.ID) || {};
       delete employment.Employee;
       return {...employee, ...employment};
     });
-
-    console.log(`Recieved ${Employees.length} employees.\n`);
 
     /**
      * ID: [ProjectID]
@@ -112,7 +136,21 @@ export default async function(req, res) {
      * StartDate:
      * Type: 2  (2: Fixed price, 3: Time and Material, 4: Non billable)
      */
-    const Projects = await getAll(`${BASE_URL}/project/Projects?$select=ID,BudgetedAmount,BudgetedHoursPerHourType,Description,EndDate,Notes,SalesTimeQuantity,StartDate,Type,TypeDescription&$expand=BudgetedHoursPerHourType`, TOKEN);
+
+    data.state = REFRESH_STEPS.LOADING_PROJECTS;
+    await data.save();
+    const Projects = await getAll(
+      `${BASE_URL}/project/Projects?$select=ID,BudgetedAmount,BudgetedHoursPerHourType,Description,EndDate,Notes,SalesTimeQuantity,StartDate,Type,TypeDescription&$expand=BudgetedHoursPerHourType`,
+      TOKEN,
+      progress => {data.stats.projectsLoaded = progress; data.save();},
+    );
+
+    data.state = REFRESH_STEPS.CALCULATING;
+    await data.save();
+
+    /**
+     * Format it so it's easily parsed in the front-end
+     */
 
     Projects.forEach(project => {
       delete project.__metadata;
@@ -168,10 +206,6 @@ export default async function(req, res) {
       });
     });
 
-    /**
-     * Format it so it's easily parsed in the front-end
-     */
-
     // Add week
     TimeTransactions.forEach(tt => {
       const date = new Date(tt.Date);
@@ -195,19 +229,14 @@ export default async function(req, res) {
 
     Projects.forEach(project => ProjectsById[project.ID] = project);
 
-    /**
-     * Save all the data!
-     */
-
-    const profileId = req.user.profile.id;
-
-    const data = new Data({profileId, Employees, Projects: ProjectsById, Items, weeks});
-
-    await Data.remove({ profileId }).exec();
-
-    await data.save();
+    Object.assign(data, {Employees, Projects: ProjectsById, Items, weeks});
+    data.state = REFRESH_STEPS.DONE;
+    data.save();
   }
   catch (error) {
     console.error(error);
+    data.state = REFRESH_STEPS.ERROR;
+    data.stats.error = error;
+    data.save();
   }
 }
