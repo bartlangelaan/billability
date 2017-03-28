@@ -18,10 +18,6 @@ class Billability extends Component {
     };
   }
 
-  componentDidMount() {
-    refreshData().then(() => this.forceUpdate());
-  }
-
   openModel(a) {
     this.setState({
       modal: <PersonModal person={a} data={data} onRequestClose={() => this.setState({modal: null})}/>
