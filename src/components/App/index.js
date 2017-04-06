@@ -3,7 +3,9 @@ import React, { Component } from 'react';
 import Billability from '../Billability';
 import data, {refreshData} from '../data';
 import { REFRESH_STEPS } from '../const';
-
+import LoadingScreen from '../LoadingScreen';
+import LoginScreen from '../LoginScreen';
+import './styles.css';
 
 class App extends Component {
 
@@ -21,15 +23,16 @@ class App extends Component {
   }
 
   render() {
+
     let result;
 
     const s = data.state;
 
     if(s === REFRESH_STEPS.NOT_LOADED_YET) {
-      result = 'Recieving data..';
+      return <LoadingScreen/>;
     }
     else if(s === REFRESH_STEPS.NOT_AUTHENTICATED) {
-      result = <div>Not logged in! <a href="/login">Click here to login</a></div>
+      return <LoginScreen/>
     }
     else if(s === REFRESH_STEPS.ERROR) {
       result = <div>
