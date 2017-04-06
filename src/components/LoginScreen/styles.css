@@ -1,0 +1,19 @@
+.wrapper{
+  width: 100%;
+  height: 100%;
+  background: url('./background.jpg');
+  background-size: cover;
+  background-position: 55% 60%;
+  display: flex;
+  align-items: center;
+  text-align: right;
+}
+
+.innerWrapper {
+  width: 40%;
+  margin-left: 10%;
+}
+
+.poweredBy {
+  font-size: 75%;
+}

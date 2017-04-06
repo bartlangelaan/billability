@@ -10,11 +10,20 @@ module.exports = {
   debug: false,
   modifyWebpackConfig: function(config, options) {
 
+    console.log(config.module.rules.find(a => a.test.toString() == '/\\.css$/').use);
     // CLIENT
     if (options.type === 'client') {
       config.plugins.push(new HtmlWebpackPlugin({
         template: 'src/index.ejs',
       }));
+      config.plugins.push(
+        new webpack.LoaderOptionsPlugin({
+          options: {
+            postcss: [require('postcss-cssnext')],
+            context: '/',
+          },
+        })
+      );
     }
     // SERVER
     else {
