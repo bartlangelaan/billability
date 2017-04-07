@@ -1,5 +1,7 @@
 
 import React, { Component } from 'react';
+import AppBar from 'react-toolbox/lib/app_bar';
+import Button from 'react-toolbox/lib/button';
 import Billability from '../Billability';
 import data, {refreshData} from '../data';
 import { REFRESH_STEPS } from '../const';
@@ -58,9 +60,15 @@ class App extends Component {
 
     return (
       <div>
-        <p>
-          <a href="/api/refresh">Refresh data from Exact Online</a> - <a href="/logout">Log out</a>
-        </p>
+        <AppBar title="Billability">
+          <Button primary raised inverse href="/api/refresh">
+            Refresh
+          </Button>
+          &nbsp;
+          <Button flat inverse href="/logout">
+            Log out
+          </Button>
+        </AppBar>
 
         {result}
 
