@@ -8,7 +8,8 @@ const data = {
   Projects: new Map(),
   weeks: [],
   timeExceptions: [],
-  state: REFRESH_STEPS.NOT_LOADED_YET
+  state: REFRESH_STEPS.NOT_LOADED_YET,
+  timestamp: null
 };
 
 export default data;
