@@ -10,7 +10,7 @@ function parseDate(datestring) {
 
 async function getAll(firstUrl, token, progress) {
   const results = [];
-  let nextUrl = firstUrl;
+  let nextUrl = firstUrl + '&$inlinecount=allpages';
   let i = 0;
   while(nextUrl){
 
@@ -27,7 +27,7 @@ async function getAll(firstUrl, token, progress) {
 
     i++;
 
-    if(typeof progress === 'function') progress(results.length);
+    if(typeof progress === 'function') progress(results.length, response.d.__count);
   }
   return results;
 }
@@ -52,6 +52,8 @@ export default async function(req, res) {
     const BASE_URL = 'https://start.exactonline.nl/api/v1/' + req.user.profile.currentDivision;
     const TOKEN = req.user.accessToken;
 
+    console.log({TOKEN});
+
     /**
      * First, recieve ALL time transactions.
      *
@@ -71,7 +73,11 @@ export default async function(req, res) {
     const TimeTransactions = (await getAll(
       BASE_URL + '/project/TimeTransactions?$select=Date,Employee,Item,ItemDescription,Notes,PriceFC,Project,Quantity',
       TOKEN,
-      progress => {data.stats.timeTransactionsLoaded = progress; data.save();},
+      (loaded, total) => {
+        data.stats.timeTransactionsLoaded = loaded;
+        data.stats.timeTransactionsTotal = total;
+        data.save();
+      },
     )).map(timetransaction => {
       delete timetransaction.__metadata;
       Items[timetransaction.Item] = timetransaction.ItemDescription;
@@ -94,7 +100,11 @@ export default async function(req, res) {
     const ActiveEmployments = await getAll(
       `${BASE_URL}/payroll/ActiveEmployments?$select=Employee,ScheduleAverageHours`,
       TOKEN,
-      progress => {data.stats.activeEmploymentsLoaded = progress; data.save();},
+      (loaded, total) => {
+        data.stats.activeEmploymentsLoaded = loaded;
+        data.stats.activeEmploymentsTotal = total;
+        data.save();
+      },
     );
 
     ActiveEmployments.forEach(employment => {
@@ -114,7 +124,11 @@ export default async function(req, res) {
     const Employees = (await getAll(
       `${BASE_URL}/payroll/Employees?$select=ID,FirstName,FullName`,
       TOKEN,
-      progress => {data.stats.employeesLoaded = progress; data.save();},
+      (loaded, total) => {
+        data.stats.employeesLoaded = loaded;
+        data.stats.employeesTotal = total;
+        data.save();
+      },
     )).map(employee => {
       delete employee.__metadata;
       const employment = ActiveEmployments.find(employment => employment.Employee == employee.ID) || {};
@@ -142,7 +156,11 @@ export default async function(req, res) {
     const Projects = await getAll(
       `${BASE_URL}/project/Projects?$select=ID,BudgetedAmount,BudgetedHoursPerHourType,Description,EndDate,Notes,SalesTimeQuantity,StartDate,Type,TypeDescription&$expand=BudgetedHoursPerHourType`,
       TOKEN,
-      progress => {data.stats.projectsLoaded = progress; data.save();},
+      (loaded, total) => {
+        data.stats.projectsLoaded = loaded;
+        data.stats.projectsTotal = total;
+        data.save();
+      },
     );
 
     data.state = REFRESH_STEPS.CALCULATING;
@@ -231,6 +249,7 @@ export default async function(req, res) {
 
     Object.assign(data, {Employees, Projects: ProjectsById, Items, weeks});
     data.state = REFRESH_STEPS.DONE;
+    data.timestamp = new Date();
     data.save();
   }
   catch (error) {

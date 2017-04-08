@@ -20,7 +20,15 @@ export default mongoose.model('Data', new Schema({
       type: Number,
       default: 0
     },
+    timeTransactionsTotal: {
+      type: Number,
+      default: 0
+    },
     activeEmploymentsLoaded: {
+      type: Number,
+      default: 0
+    },
+    activeEmploymentsTotal: {
       type: Number,
       default: 0
     },
@@ -28,10 +36,19 @@ export default mongoose.model('Data', new Schema({
       type: Number,
       default: 0
     },
+    employeesTotal: {
+      type: Number,
+      default: 0
+    },
     projectsLoaded: {
       type: Number,
       default: 0
     },
+    projectsTotal: {
+      type: Number,
+      default: 0
+    },
+    timestamp: Date,
     error: Schema.Types.Mixed,
   }),
 }));
