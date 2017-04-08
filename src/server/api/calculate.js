@@ -256,6 +256,7 @@ export default async function(req, res) {
     console.error(error);
     data.state = REFRESH_STEPS.ERROR;
     data.stats.error = error;
+    data.timestamp = new Date();
     data.save();
   }
 }

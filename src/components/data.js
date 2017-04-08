@@ -27,6 +27,8 @@ export function refreshData() {
       newData.Employees = newData.Employees.map(e => new Employee(e));
     }
 
+    if(newData.timestamp) newData.timestamp = new Date(newData.timestamp);
+
     Object.assign(data, newData);
 
     console.log('Now the data is:', data);
