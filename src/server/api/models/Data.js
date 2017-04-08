@@ -48,7 +48,7 @@ export default mongoose.model('Data', new Schema({
       type: Number,
       default: 0
     },
-    timestamp: Date,
     error: Schema.Types.Mixed,
   }),
+  timestamp: Date,
 }));
