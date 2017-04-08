@@ -49,3 +49,24 @@
 .poweredBy {
   font-size: 75%;
 }
+
+
+.footer {
+  position: absolute;
+  bottom: 1em;
+  text-align: center;
+  font-size: 60%;
+  left: 0;
+  right: 0;
+  opacity: 0.5;
+  transition: opacity 0.3s;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  & a {
+    color: rgb(63, 81, 181);
+    text-decoration: none;
+  }
+}

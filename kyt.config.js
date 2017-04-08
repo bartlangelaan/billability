@@ -10,11 +10,11 @@ module.exports = {
   debug: false,
   modifyWebpackConfig: function(config, options) {
 
-    console.log(config.module.rules.find(a => a.test.toString() == '/\\.css$/').use);
     // CLIENT
     if (options.type === 'client') {
       config.plugins.push(new HtmlWebpackPlugin({
         template: 'src/index.ejs',
+        favicon: 'src/favicon.png',
       }));
       config.plugins.push(
         new webpack.LoaderOptionsPlugin({
@@ -25,6 +25,7 @@ module.exports = {
         })
       );
     }
+
     // SERVER
     else {
       config.plugins.push(new webpack.DefinePlugin({
