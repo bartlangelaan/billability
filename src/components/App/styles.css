@@ -1,4 +1,7 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
 :global #root {
   width: 100vw;
   height: 100vh;
+  font-family: 'Roboto', sans-serif;
 }
