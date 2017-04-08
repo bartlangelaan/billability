@@ -1,3 +1,7 @@
-/*:global {*/
-  /*@import 'react-table/react-table.css'*/
-/*}*/
+.settings {
+  display: flex;
+}
+
+.typeSetting {
+  flex-grow: 1;
+}
