@@ -6,6 +6,7 @@ import data, {refreshData} from '../data';
 import { REFRESH_STEPS } from '../const';
 import LoadingScreen from '../LoadingScreen';
 import LoginScreen from '../LoginScreen';
+import RefreshScreen from '../RefreshScreen'
 import './styles.css';
 
 class App extends Component {
@@ -25,8 +26,6 @@ class App extends Component {
 
   render() {
 
-    let result;
-
     const s = data.state;
 
     if(s === REFRESH_STEPS.NOT_LOADED_YET) {
@@ -36,7 +35,7 @@ class App extends Component {
       return <LoginScreen/>
     }
     else if(s === REFRESH_STEPS.ERROR) {
-      result = <DashboardPage>
+      return <DashboardPage>
         <h3>Error loading Exact Online data (error {data.stats.error.statusCode})</h3>
         <code><pre>{data.stats.error.data}</pre></code>
       </DashboardPage>;
@@ -45,16 +44,7 @@ class App extends Component {
       return <Billability/>;
     }
     else {
-      return (<DashboardPage>
-        <ul>
-          <li>{s > REFRESH_STEPS.INIT ? '✅' : ''} Logging in to Exact Online</li>
-          <li>{s > REFRESH_STEPS.LOADING_TIME_TRANSACTIONS ? '✅' : ''} Loading all time transactions ({data.stats.timeTransactionsLoaded} loaded)</li>
-          <li>{s > REFRESH_STEPS.LOADING_ACTIVE_EMPLOYMENTS ? '✅' : ''} Loading all active employments ({data.stats.activeEmploymentsLoaded} loaded)</li>
-          <li>{s > REFRESH_STEPS.LOADING_EMPLOYEES ? '✅' : ''} Loading all employees ({data.stats.employeesLoaded} loaded)</li>
-          <li>{s > REFRESH_STEPS.LOADING_PROJECTS ? '✅' : ''} Loading all projects ({data.stats.projectsLoaded} loaded)</li>
-          <li>Calculating billability...</li>
-        </ul>
-      </DashboardPage>);
+      return <RefreshScreen />;
     }
   }
 }
