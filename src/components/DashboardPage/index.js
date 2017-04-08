@@ -1,10 +1,11 @@
 import React from 'react';
 import AppBar from 'react-toolbox/lib/app_bar';
 import Button from 'react-toolbox/lib/button';
+import styles from './styles.css';
 
 function DashboardPage({children}) {
   return (
-    <div>
+    <div className={styles.wrapper}>
       <AppBar title="Billability">
         <Button primary raised inverse href="/api/refresh">
           Refresh
@@ -14,8 +15,9 @@ function DashboardPage({children}) {
           Log out
         </Button>
       </AppBar>
-
-      {children}
+      <div className={styles.content}>
+        {children}
+      </div>
 
     </div>
   )
