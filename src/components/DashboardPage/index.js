@@ -2,8 +2,9 @@ import React from 'react';
 import AppBar from 'react-toolbox/lib/app_bar';
 import Button from 'react-toolbox/lib/button';
 import styles from './styles.css';
+import classnames from 'classnames';
 
-function DashboardPage({children}) {
+function DashboardPage({children, contentClassName}) {
   return (
     <div className={styles.wrapper}>
       <AppBar title="Billability">
@@ -15,7 +16,7 @@ function DashboardPage({children}) {
           Log out
         </Button>
       </AppBar>
-      <div className={styles.content}>
+      <div className={classnames(styles.content, contentClassName)}>
         {children}
       </div>
 
