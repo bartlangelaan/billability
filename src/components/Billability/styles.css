@@ -5,3 +5,7 @@
 .typeSetting {
   flex-grow: 1;
 }
+
+.groupSetting {
+  width: 250px;
+}
