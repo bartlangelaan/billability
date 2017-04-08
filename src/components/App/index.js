@@ -1,8 +1,7 @@
 
 import React, { Component } from 'react';
-import AppBar from 'react-toolbox/lib/app_bar';
-import Button from 'react-toolbox/lib/button';
 import Billability from '../Billability';
+import DashboardPage from '../DashboardPage';
 import data, {refreshData} from '../data';
 import { REFRESH_STEPS } from '../const';
 import LoadingScreen from '../LoadingScreen';
@@ -37,16 +36,16 @@ class App extends Component {
       return <LoginScreen/>
     }
     else if(s === REFRESH_STEPS.ERROR) {
-      result = <div>
+      result = <DashboardPage>
         <h3>Error loading Exact Online data (error {data.stats.error.statusCode})</h3>
         <code><pre>{data.stats.error.data}</pre></code>
-      </div>;
+      </DashboardPage>;
     }
     else if(s === REFRESH_STEPS.DONE) {
-      result = <Billability/>;
+      return <Billability/>;
     }
     else {
-      result = (
+      return (<DashboardPage>
         <ul>
           <li>{s > REFRESH_STEPS.INIT ? '✅' : ''} Logging in to Exact Online</li>
           <li>{s > REFRESH_STEPS.LOADING_TIME_TRANSACTIONS ? '✅' : ''} Loading all time transactions ({data.stats.timeTransactionsLoaded} loaded)</li>
@@ -55,25 +54,8 @@ class App extends Component {
           <li>{s > REFRESH_STEPS.LOADING_PROJECTS ? '✅' : ''} Loading all projects ({data.stats.projectsLoaded} loaded)</li>
           <li>Calculating billability...</li>
         </ul>
-      );
+      </DashboardPage>);
     }
-
-    return (
-      <div>
-        <AppBar title="Billability">
-          <Button primary raised inverse href="/api/refresh">
-            Refresh
-          </Button>
-          &nbsp;
-          <Button flat inverse href="/logout">
-            Log out
-          </Button>
-        </AppBar>
-
-        {result}
-
-      </div>
-    );
   }
 }
 

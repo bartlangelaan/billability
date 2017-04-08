@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import ReactTable from 'react-table';
 import {observer}  from 'mobx-react';
 import PersonModal from '../PersonModal';
+import DashboardPage from '../DashboardPage';
 import {BILLABILITY_TYPE, GROUP_TYPES} from '../const';
 import data, {refreshData} from '../data';
 import settings from '../settings';
@@ -64,7 +65,7 @@ class Billability extends Component {
   render() {
 
     return (
-      <div>
+      <DashboardPage>
         {this.state.modal}
         <select onChange={({target}) => settings.billabilityType = target.value} value={settings.billabilityType}>
           {Object.keys(BILLABILITY_TYPE).map(key => <option key={key}>{BILLABILITY_TYPE[key]}</option>)}
@@ -112,7 +113,7 @@ class Billability extends Component {
           ]}
           data={data.Employees}
         />
-      </div>
+      </DashboardPage>
     )
   }
 
