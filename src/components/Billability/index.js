@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import Dropdown from 'react-toolbox/lib/dropdown';
+import Input from 'react-toolbox/lib/input';
 import ReactTable from 'react-table';
 import {observer}  from 'mobx-react';
 import PersonModal from '../PersonModal';
@@ -7,6 +9,7 @@ import {BILLABILITY_TYPE, GROUP_TYPES} from '../const';
 import data, {refreshData} from '../data';
 import settings from '../settings';
 import '!style!css!postcss!react-table/react-table.css';
+import styles from './styles.css'
 
 const sum = arr => arr.reduce((p, c) => p + c, 0);
 
@@ -67,14 +70,34 @@ class Billability extends Component {
     return (
       <DashboardPage>
         {this.state.modal}
-        <select onChange={({target}) => settings.billabilityType = target.value} value={settings.billabilityType}>
-          {Object.keys(BILLABILITY_TYPE).map(key => <option key={key}>{BILLABILITY_TYPE[key]}</option>)}
-        </select>
-        <select onChange={({target}) => settings.groupType = target.value} value={settings.groupType}>
-          {Object.keys(GROUP_TYPES).map(key => <option key={key}>{GROUP_TYPES[key]}</option>)}
-        </select>
-        <input onBlur={({target}) => settings.from = target.value} defaultValue={settings.from} />
-        <input onBlur={({target}) => settings.from = target.value} defaultValue={settings.to} />
+
+        <div className={styles.settings}>
+          <Dropdown
+            onChange={value => {settings.billabilityType = value}}
+            value={settings.billabilityType}
+            source={Object.values(BILLABILITY_TYPE).map(value => ({value, label: value}))}
+            className={styles.typeSetting}
+            label="Billability is measured by"
+          />
+
+          <Dropdown
+            onChange={value => {settings.groupType = value}}
+            value={settings.groupType}
+            source={Object.values(GROUP_TYPES).map(value => ({value, label: value}))}
+            label="Group by"
+          />
+
+          <Input
+            onChange={value => settings.from = value}
+            value={settings.from}
+            label="From week"
+          />
+          <Input
+            onChange={value => settings.to = value}
+            value={settings.to}
+            label="To week"
+          />
+        </div>
 
         <ReactTable
           pivotBy={['group']}
