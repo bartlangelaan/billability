@@ -100,6 +100,8 @@ class Billability extends Component {
         </div>
 
         <ReactTable
+          showPagination={false}
+          pageSize={new Set(data.Employees.map(employee => this.getGroup(employee))).size}
           pivotBy={['group']}
           columns={[
             {
