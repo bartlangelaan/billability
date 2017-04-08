@@ -84,6 +84,7 @@ class Billability extends Component {
             onChange={value => {settings.groupType = value}}
             value={settings.groupType}
             source={Object.values(GROUP_TYPES).map(value => ({value, label: value}))}
+            className={styles.groupSetting}
             label="Group by"
           />
 
