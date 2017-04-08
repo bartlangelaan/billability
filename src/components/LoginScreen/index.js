@@ -7,7 +7,7 @@ function LoginScreen() {
     <div className={styles.wrapper}>
       <div className={styles.innerWrapper}>
         <h1>Billability <span className={styles.poweredBy}>for Exact Online</span></h1>
-        <p>With this tool, you can view the billability for each employee, for each week.</p>
+        <p>Measure the billability of all employees, on a weekly basis.</p>
         <p>
           <Button href='http://github.com/bartlangelaan/billability' target='_blank' raised>
             View source code
