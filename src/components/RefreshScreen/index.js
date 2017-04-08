@@ -1,22 +1,80 @@
 import React from 'react';
 import data from '../data';
 import DashboardPage from '../DashboardPage';
+import { Card, CardMedia, CardTitle, CardText, CardActions } from 'react-toolbox/lib/card';
+import ProgressBar from 'react-toolbox/lib/progress_bar';
 import { REFRESH_STEPS } from '../const';
+import styles from './styles.css';
+
+function RefreshPart({step, statsProperty, name}) {
+  const s = data.state;
+  if(s < step) {
+    return <CardText className={styles.todo}>Need to load all {name}..</CardText>
+  }
+  if(s === step) {
+    return (
+      <div>
+        <CardText className={styles.busy}>Loading all {data.stats[`${statsProperty}Total`]} {name}..</CardText>
+        <ProgressBar mode="determinate" value={data.stats[`${statsProperty}Loaded`]} max={data.stats[`${statsProperty}Total`]}/>
+      </div>
+    );
+  }
+  if(s > step) {
+    return <CardText className={styles.done}>Loaded {data.stats[`${statsProperty}Loaded`]} {name}.</CardText>
+  }
+}
 
 function RefreshScreen() {
 
   const s = data.state;
 
   return (
-    <DashboardPage>
-      <ul>
-        <li>{s > REFRESH_STEPS.INIT ? '✅' : ''} Logging in to Exact Online</li>
-        <li>{s > REFRESH_STEPS.LOADING_TIME_TRANSACTIONS ? '✅' : ''} Loading all time transactions ({data.stats.timeTransactionsLoaded} loaded)</li>
-        <li>{s > REFRESH_STEPS.LOADING_ACTIVE_EMPLOYMENTS ? '✅' : ''} Loading all active employments ({data.stats.activeEmploymentsLoaded} loaded)</li>
-        <li>{s > REFRESH_STEPS.LOADING_EMPLOYEES ? '✅' : ''} Loading all employees ({data.stats.employeesLoaded} loaded)</li>
-        <li>{s > REFRESH_STEPS.LOADING_PROJECTS ? '✅' : ''} Loading all projects ({data.stats.projectsLoaded} loaded)</li>
-        <li>Calculating billability...</li>
-      </ul>
+    <DashboardPage contentClassName={styles.wrapper}>
+      <Card className={styles.card}>
+        <CardTitle
+          title="Refreshing data from Exact Online.."
+        />
+
+        {s > REFRESH_STEPS.INIT ? (
+          <CardText className={styles.done}>Logged into Exact Online.</CardText>
+        ) : (
+          <div>
+            <CardText className={styles.busy}>Logging into Exact Online..</CardText>
+            <ProgressBar value={100} mode="determinate" />
+          </div>
+        )}
+
+        <RefreshPart
+          step={REFRESH_STEPS.LOADING_TIME_TRANSACTIONS}
+          statsProperty="timeTransactions"
+          name="time transactions"
+        />
+        <RefreshPart
+          step={REFRESH_STEPS.LOADING_ACTIVE_EMPLOYMENTS}
+          statsProperty="activeEmployments"
+          name="active employments"
+        />
+        <RefreshPart
+          step={REFRESH_STEPS.LOADING_EMPLOYEES}
+          statsProperty="employees"
+          name="employees"
+        />
+        <RefreshPart
+          step={REFRESH_STEPS.LOADING_PROJECTS}
+          statsProperty="projects"
+          name="projects"
+        />
+
+        {s === REFRESH_STEPS.CALCULATING ? (
+          <div>
+            <CardText className={styles.busy}>Calculating billability</CardText>
+            <ProgressBar />
+          </div>
+        ) : (
+          <CardText className={styles.todo}>Need to calculate billability.. {null}</CardText>
+        )}
+
+      </Card>
     </DashboardPage>
   );
 }
