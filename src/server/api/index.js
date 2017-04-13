@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import express from 'express';
 import mongoose from 'mongoose';
-import calculate from './calculate';
+import refreshDataFromExact from './refreshDataFromExact';
 import Data from './models/Data';
 import TimeException from './models/TimeException';
 import { REFRESH_STEPS } from '../../components/const';
@@ -16,7 +16,7 @@ function protect(req, res, next) {
   return res.redirect('/login');
 }
 
-router.get('/refresh', protect, calculate);
+router.get('/refresh', protect, refreshDataFromExact);
 
 router.get('/data', async (req, res) => {
   if (!req.isAuthenticated()) {
