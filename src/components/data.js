@@ -9,29 +9,27 @@ const data = {
   weeks: [],
   timeExceptions: [],
   state: REFRESH_STEPS.NOT_LOADED_YET,
-  timestamp: null
+  timestamp: null,
 };
 
 export default data;
 
 export function refreshData() {
-  return fetch('/api/data', {credentials: 'same-origin'}).then(data => data.json()).then(newData => {
-
+  return fetch('/api/data', { credentials: 'same-origin' }).then(data => data.json()).then((newData) => {
     console.debug('Data recieved:', newData);
 
-    if(newData.Employees) {
-      newData.Employees.forEach(employee => Object.keys(employee.timeTransactions).forEach(week => {
+    if (newData.Employees) {
+      newData.Employees.forEach(employee => Object.keys(employee.timeTransactions).forEach((week) => {
         employee.timeTransactions[week] = employee.timeTransactions[week].map(tt => new TimeTransaction(tt));
       }));
 
       newData.Employees = newData.Employees.map(e => new Employee(e));
     }
 
-    if(newData.timestamp) newData.timestamp = new Date(newData.timestamp);
+    if (newData.timestamp) newData.timestamp = new Date(newData.timestamp);
 
     Object.assign(data, newData);
 
     console.log('Now the data is:', data);
-
   });
 }

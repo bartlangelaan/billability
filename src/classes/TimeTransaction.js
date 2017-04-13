@@ -2,7 +2,7 @@ import { BILLABILITY_TYPE, GROUP_TYPES } from '../components/const';
 import data from '../components/data';
 import settings from '../components/settings';
 class TimeTransaction {
-  constructor(data){
+  constructor(data) {
     this.data = data;
   }
 
@@ -11,7 +11,7 @@ class TimeTransaction {
   }
 
   billability() {
-    switch(settings.billabilityType) {
+    switch (settings.billabilityType) {
       case BILLABILITY_TYPE.HOURS_REGISTERED:
         return 1;
       case BILLABILITY_TYPE.HOURS_REGISTERED_BILLABLE_PROJECT:

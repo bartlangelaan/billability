@@ -2,7 +2,7 @@ import { BILLABILITY_TYPE, GROUP_TYPES } from '../const';
 import * as store from '../data';
 
 export function isBillable(transaction) {
-  switch(store.billabilityType.get()) {
+  switch (store.billabilityType.get()) {
     case BILLABILITY_TYPE.HOURS_REGISTERED:
       return true;
     case BILLABILITY_TYPE.HOURS_REGISTERED_BILLABLE_PROJECT:
@@ -11,19 +11,16 @@ export function isBillable(transaction) {
 }
 
 export function calculateBillability(employee, week, raw = false) {
-
   const billableItems = [];
   const nonBillableItems = [];
 
-  (employee.timeTransactionsPerWeek[week] || []).forEach(transaction => {
-
-    if(this.isBillable(transaction)) {
+  (employee.timeTransactionsPerWeek[week] || []).forEach((transaction) => {
+    if (this.isBillable(transaction)) {
       billableItems.push(transaction);
     }
     else {
       nonBillableItems.push(transaction);
     }
-
   });
 
   const billableTime = billableItems.reduce((sum, transaction) => sum + transaction.Quantity, 0);
@@ -32,17 +29,17 @@ export function calculateBillability(employee, week, raw = false) {
 
   let billable = billableTime / totalTime;
 
-  if(isNaN(billable)) {
+  if (isNaN(billable)) {
     billable = 1;
   }
 
-  if(raw) {
+  if (raw) {
     return billable;
   }
 
-  const billableText = (billable * 100).toFixed(2) + ' %';
+  const billableText = `${(billable * 100).toFixed(2)} %`;
 
-  const infoFromItem = (item) => <div>{item.Quantity.toFixed(1)} - {(item.Notes || item.ProjectDescription).substring(0, 30)}</div>
+  const infoFromItem = item => <div>{item.Quantity.toFixed(1)} - {(item.Notes || item.ProjectDescription).substring(0, 30)}</div>;
 
   const quantity = (a, b) => b.Quantity - a.Quantity;
 
@@ -53,5 +50,5 @@ export function calculateBillability(employee, week, raw = false) {
     ...nonBillableItems.sort(quantity).map(infoFromItem),
   ];
 
-  return <Tooltip content={billableInfo} styles={{content: {textAlign: 'left'}}}>{billableText}</Tooltip>
+  return <Tooltip content={billableInfo} styles={{ content: { textAlign: 'left' } }}>{billableText}</Tooltip>;
 }

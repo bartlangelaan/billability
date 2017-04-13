@@ -2,7 +2,7 @@ import data from '../components/data';
 
 class Employee {
 
-  constructor(data){
+  constructor(data) {
     this.data = data;
   }
 
@@ -14,19 +14,18 @@ class Employee {
       &&
         (timeException.to ? timeException.to >= week : true)
     ));
-    if(timeException && timeException.quantity < 0) return totalQuantityThisWeek;
-    if(timeException) return timeException.quantity;
+    if (timeException && timeException.quantity < 0) return totalQuantityThisWeek;
+    if (timeException) return timeException.quantity;
     return this.data.ScheduleAverageHours || 0;
   }
 
   billability(week) {
-
     const transactions = this.data.timeTransactions[week];
 
     const transactionBillabilities = transactions.map(transaction => ({
       billability: transaction.billability(),
       quantity: transaction.data.Quantity,
-      transaction
+      transaction,
     })).sort((t1, t2) => (t1.billability !== t2.billability) ? (t1.billability - t2.billability) : (t2.quantity - t1.quantity));
 
     const billableTime = transactionBillabilities.reduce((sum, transaction) => sum + (transaction.billability * transaction.quantity), 0);
@@ -35,14 +34,14 @@ class Employee {
 
     let billable = billableTime / totalTime;
 
-    if(isNaN(billable) || billable === Infinity) {
+    if (isNaN(billable) || billable === Infinity) {
       billable = 1;
     }
 
     return {
       billability: billable,
       totalTime,
-      transactionBillabilities
+      transactionBillabilities,
     };
   }
 

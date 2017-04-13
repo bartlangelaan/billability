@@ -6,26 +6,25 @@ import ProgressBar from 'react-toolbox/lib/progress_bar';
 import { REFRESH_STEPS } from '../const';
 import styles from './styles.css';
 
-function RefreshPart({step, statsProperty, name}) {
+function RefreshPart({ step, statsProperty, name }) {
   const s = data.state;
-  if(s < step) {
-    return <CardText className={styles.todo}>Need to load all {name}..</CardText>
+  if (s < step) {
+    return <CardText className={styles.todo}>Need to load all {name}..</CardText>;
   }
-  if(s === step) {
+  if (s === step) {
     return (
       <div>
         <CardText className={styles.busy}>Loading all {data.stats[`${statsProperty}Total`]} {name}..</CardText>
-        <ProgressBar mode="determinate" value={data.stats[`${statsProperty}Loaded`]} max={data.stats[`${statsProperty}Total`]}/>
+        <ProgressBar mode="determinate" value={data.stats[`${statsProperty}Loaded`]} max={data.stats[`${statsProperty}Total`]} />
       </div>
     );
   }
-  if(s > step) {
-    return <CardText className={styles.done}>Loaded {data.stats[`${statsProperty}Loaded`]} {name}.</CardText>
+  if (s > step) {
+    return <CardText className={styles.done}>Loaded {data.stats[`${statsProperty}Loaded`]} {name}.</CardText>;
   }
 }
 
 function RefreshScreen() {
-
   const s = data.state;
 
   return (
