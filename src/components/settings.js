@@ -1,4 +1,4 @@
-import { observable, extendObservable, autorun } from 'mobx';
+import { observable, autorun } from 'mobx';
 import { BILLABILITY_TYPE, GROUP_TYPES } from './const';
 
 const settings = observable({

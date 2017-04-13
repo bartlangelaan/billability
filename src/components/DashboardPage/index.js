@@ -8,7 +8,7 @@ import data from '../data';
 import { REFRESH_STEPS } from '../const';
 const TooltipButton = Tooltip(Button);
 
-function DashboardPage({children, contentClassName}) {
+function DashboardPage({ children, contentClassName }) {
   const refreshing = data.state >= REFRESH_STEPS.INIT && data.state < REFRESH_STEPS.DONE;
   return (
     <div className={styles.wrapper}>
@@ -31,7 +31,7 @@ function DashboardPage({children, contentClassName}) {
       </div>
 
     </div>
-  )
+  );
 }
 
 export default DashboardPage;

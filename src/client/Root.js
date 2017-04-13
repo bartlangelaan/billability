@@ -5,7 +5,7 @@ import App from '../components/App';
 // We need a Root component for React Hot Loading.
 function Root() {
   return (
-    <App/>
+    <App />
   );
 }
 

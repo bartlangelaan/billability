@@ -9,14 +9,14 @@ export default class extends Component {
     const person = this.props.person.data;
     return (
       <Modal
-        isOpen={true}
+        isOpen
         onRequestClose={this.props.onRequestClose}
       >
         <h2>{person.EmployeeFullName}</h2>
         <h3>Hours a week exceptions</h3>
-        <TimeExceptoinsForm exceptions={store.timeExceptions.filter(ex => ex.employee === person.ID)} employee={person.ID}/>
+        <TimeExceptoinsForm exceptions={store.timeExceptions.filter(ex => ex.employee === person.ID)} employee={person.ID} />
       </Modal>
-    )
+    );
   }
 
 }
