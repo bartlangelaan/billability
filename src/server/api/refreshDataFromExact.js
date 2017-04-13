@@ -23,7 +23,7 @@ async function getAll(firstUrl, token, progress) {
     // Extract the new url for next iteration
     nextUrl = response.d.__next;
 
-    if (typeof progress === 'function') progress(results.length, response.d.__count);
+    if (typeof progress === 'function') await progress(results.length, response.d.__count);
   }
 
   return results;
@@ -65,7 +65,7 @@ export default async function (req, res) {
       (loaded, total) => {
         data.stats.timeTransactionsLoaded = loaded;
         data.stats.timeTransactionsTotal = total;
-        data.save();
+        return data.save();
       },
     )).map((timetransaction) => {
       delete timetransaction.__metadata;
@@ -92,7 +92,7 @@ export default async function (req, res) {
       (loaded, total) => {
         data.stats.activeEmploymentsLoaded = loaded;
         data.stats.activeEmploymentsTotal = total;
-        data.save();
+        return data.save();
       },
     );
 
@@ -116,7 +116,7 @@ export default async function (req, res) {
       (loaded, total) => {
         data.stats.employeesLoaded = loaded;
         data.stats.employeesTotal = total;
-        data.save();
+        return data.save();
       },
     )).map((employee) => {
       delete employee.__metadata;
@@ -148,7 +148,7 @@ export default async function (req, res) {
       (loaded, total) => {
         data.stats.projectsLoaded = loaded;
         data.stats.projectsTotal = total;
-        data.save();
+        return data.save();
       },
     );
 
