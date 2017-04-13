@@ -1,6 +1,6 @@
 import React from 'react';
 import { refreshData } from '../data';
-import { Form, Text, Select, Textarea, Checkbox, Radio, NestedForm, FormError } from 'react-form';
+import { Form, Text } from 'react-form';
 
 const TimeExceptionsForm = ({ exceptions, employee }) => {
   const ex = exceptions.slice();

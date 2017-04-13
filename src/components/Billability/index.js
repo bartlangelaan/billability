@@ -6,7 +6,7 @@ import { observer } from 'mobx-react';
 import PersonModal from '../PersonModal';
 import DashboardPage from '../DashboardPage';
 import { BILLABILITY_TYPE, GROUP_TYPES } from '../const';
-import data, { refreshData } from '../data';
+import data from '../data';
 import settings from '../settings';
 import '!style!css!postcss!react-table/react-table.css';
 import styles from './styles.css';
