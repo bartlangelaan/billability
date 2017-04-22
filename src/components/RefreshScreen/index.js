@@ -3,26 +3,25 @@ import data from '../data';
 import DashboardPage from '../DashboardPage';
 import { Card, CardMedia, CardTitle, CardText, CardActions } from 'react-toolbox/lib/card';
 import ProgressBar from 'react-toolbox/lib/progress_bar';
+import { observer } from 'mobx-react';
 import { REFRESH_STEPS } from '../const';
 import styles from './styles.css';
 
-function RefreshPart({ step, statsProperty, name }) {
+const RefreshPart = observer(({ step, statsProperty, name }) => {
   const s = data.state;
   if (s < step) {
     return <CardText className={styles.todo}>Need to load all {name}..</CardText>;
-  }
-  if (s === step) {
+  } else if (s === step) {
     return (
       <div>
         <CardText className={styles.busy}>Loading all {data.stats[`${statsProperty}Total`]} {name}..</CardText>
         <ProgressBar mode="determinate" value={data.stats[`${statsProperty}Loaded`]} max={data.stats[`${statsProperty}Total`]} />
       </div>
     );
-  }
-  if (s > step) {
+  } else {
     return <CardText className={styles.done}>Loaded {data.stats[`${statsProperty}Loaded`]} {name}.</CardText>;
   }
-}
+});
 
 function RefreshScreen() {
   const s = data.state;
@@ -78,4 +77,4 @@ function RefreshScreen() {
   );
 }
 
-export default RefreshScreen;
+export default observer(RefreshScreen);
