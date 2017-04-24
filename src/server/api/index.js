@@ -9,6 +9,20 @@ import { REFRESH_STEPS } from '../../components/const';
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/billability');
 mongoose.Promise = Promise;
 
+/**
+ * If any data was loading while starting up, change it's state to error
+ */
+Data
+  .where('state').lt(REFRESH_STEPS.DONE).gt(REFRESH_STEPS.ERROR)
+  .update({
+    state: REFRESH_STEPS.ERROR,
+    'stats.error': {
+      statusCode: 500,
+      data: 'Server restarted while refreshing.',
+    },
+  })
+  .exec();
+
 const router = express.Router(); // eslint-disable-line new-cap
 
 function protect(req, res, next) {
@@ -26,16 +40,23 @@ router.get('/data', async (req, res) => {
   }
   const profileId = req.user.profile.id;
   const data = await Data.findOne({ profileId }).exec();
-  const timeExceptions = await TimeException.find().exec();
+  const timeExceptions = (await TimeException.find({ profileId }).exec()).map(e => e.toObject());
 
   if (!data) {
     // Need to create data
     return res.redirect('/refresh');
   }
 
+  const dataObject = data.toObject();
+
+  if (dataObject.Employees) {
+    dataObject.Employees.forEach(employee => {
+      employee.TimeExceptions = timeExceptions.filter(te => te.employee === employee.ID);
+    });
+  }
+
   return res.json({
-    timeExceptions: timeExceptions.map(e => e.toObject()),
-    ...data.toObject(),
+    ...dataObject,
   });
 });
 
