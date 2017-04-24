@@ -15,22 +15,9 @@ const sum = arr => arr.reduce((p, c) => p + c, 0);
 
 class Billability extends Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      modal: null,
-    };
-  }
-
-  openModel(a) {
-    this.setState({
-      modal: <PersonModal person={a} data={data} onRequestClose={() => this.setState({ modal: null })} />,
-    });
-  }
-
   getGroup(employee) {
     const heads = ['José', 'Hans', 'Jeroen', 'Martine'];
-    const name = employee.data.FullName.split(' ')[0];
+    const name = employee.FullName.split(' ')[0];
     switch (settings.groupType) {
       case GROUP_TYPES.NONE:
         return 'All';
@@ -44,7 +31,7 @@ class Billability extends Component {
           return 'Head';
         } else if (['Kim', 'Manon', 'Aniek'].includes(name)) {
           return 'PM';
-        } else if (['Ian', 'Patrick', 'Hanneke', 'Bart', 'Chun'].includes(name) || employee.data.FullName == 'Matthijs Perik') {
+        } else if (['Ian', 'Patrick', 'Hanneke', 'Bart', 'Chun'].includes(name) || employee.FullName === 'Matthijs Perik') {
           return 'Dev-red';
         } else if (['Ivo', 'Matthijs', 'Rick', 'Niels', 'Peter'].includes(name)) {
           return 'Dev-blue';
@@ -110,30 +97,35 @@ class Billability extends Component {
                 { header: 'Group', accessor: row => this.getGroup(row), minWidth: 150, id: 'group' },
                 {
                   header: 'Name',
-                  accessor: 'data.FullName',
-                  render: ({ value, row }) => <span title={value}
-                    onClick={() => this.openModel(row)}
-                  >{row ? row.data.FirstName : null}</span>,
+                  accessor: 'FullName',
+                  render: ({ value, row }) =>
+                    <span title={value}>{row ? row.FirstName : null}</span>,
                 },
-                { header: 'H/W', accessor: row => row.data.ScheduleAverageHours || 0, aggregate: sum, maxWidth: 50, id: 'h/w' },
+                { header: 'H/W', accessor: row => row.ScheduleAverageHours || 0, aggregate: sum, maxWidth: 50, id: 'h/w' },
               ],
             },
             {
               header: 'Billability',
-              columns: data.weeks.filter(week => settings.from <= week && week <= settings.to).map(week => ({
-                header: week,
-                id: `billability-${week}`,
-                accessor: employee => employee.billability(week),
-                render: BillabilityNumber,
-                style: { textAlign: 'right', overflow: 'visible' },
-                aggregate: billibilities =>
-                (
-                  sum(billibilities.map(b => b.billability * b.totalTime))
-                  /
-                  sum(billibilities.map(b => b.totalTime))
-                ) || 0,
-                maxWidth: 80,
-              })),
+              columns: data.weeks
+                .filter(week => settings.from <= week && week <= settings.to)
+                .map(week => ({
+                  header: week,
+                  id: `billability-${week}`,
+                  accessor: employee =>
+                    employee.billability[week][settings.billabilityType].billability,
+                  render: BillabilityNumber,
+                  style: { textAlign: 'right', overflow: 'visible' },
+                  aggregate: (_, employees) => (
+                    sum(employees.map(employee =>
+                      employee.__original.billability[week][settings.billabilityType].billableHours
+                    ))
+                    /
+                    sum(employees.map(employee =>
+                      employee.__original.billability[week][settings.billabilityType].maxHours
+                    ))
+                  ),
+                  maxWidth: 80,
+                })),
             },
           ]}
           data={data.Employees}
@@ -145,35 +137,11 @@ class Billability extends Component {
 }
 
 const BillabilityNumber = ({ row, value, aggregated }) => {
-  if (aggregated) { return (
-    <span title="Aggregated value">{(value * 100).toFixed(1)} %</span>
-  ); }
-
-  // Check if all transactions are only billable or not-billable, and not .4 billable for example
-  const variableBillabilities = value.transactionBillabilities.find(tb => tb.billability !== 0 && tb.billability !== 1);
-
-
-  const title = `Billable ${value.billability * 100} % of ${value.totalTime} hours\n${value.transactionBillabilities.map((tb) => {
-    const project = tb.transaction.project;
-
-    // Billability rate
-    return `${variableBillabilities ?
-          // If there are other numbers then 0 and 1, show like 40 % or 100 %
-          `${(tb.billability * 100).toFixed()}%` :
-          (tb.billability ? '✅' : '❎')
-
-      // Show the number of hours of this transaction, like 0.4
-       } ${tb.quantity.toFixed(1)} - ${
-      // Show the notes of this transaction, or the project if no note is available
-       tb.transaction.data.Notes ?
-        `${tb.transaction.data.Notes} (${project.Description})` :
-        project.Description}`;
-  }).join('\n')}`;
+  if (isNaN(value)) return null;
+  if (value === Infinity) return <span>∞</span>;
 
   return (
-    <span title={title}>{
-      (value.totalTime == 0) ? '-' : `${(value.billability * 100).toFixed(1)} %`
-    }</span>
+    <span>{(value * 100).toFixed(1)} %</span>
   );
 };
 

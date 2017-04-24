@@ -8,8 +8,6 @@ export default mongoose.model('Data', new Schema({
     unique: true,
     required: true,
   },
-  projects: Schema.Types.Mixed,
-  employees: Schema.Types.Mixed,
   TimeTransactions: Schema.Types.Mixed,
   Employees: Schema.Types.Mixed,
   Projects: Schema.Types.Mixed,

@@ -2,7 +2,7 @@
 import weekNumber from 'current-week-number';
 import Data from './models/Data';
 import { get } from '../ExactOnline';
-import { REFRESH_STEPS } from '../../components/const';
+import { REFRESH_STEPS, BILLABILITY_TYPE } from '../../components/const';
 
 function parseDate(datestring) {
   if (!datestring) return null;
@@ -207,12 +207,36 @@ export default async function (req, res) {
       });
     });
 
+    // Group projects by ID
+    const ProjectsById = {};
+
+    Projects.forEach((project) => {
+      ProjectsById[project.ID] = project;
+    });
+
     // Add week
     TimeTransactions.forEach((tt) => {
       const date = new Date(tt.Date);
       const week = weekNumber(date);
       const year = date.getFullYear();
       tt.week = `${week === 53 && date.getMonth() === 0 ? year - 1 : year}-${week.toString().padStart(2, '0')}`;
+
+      const project = ProjectsById[tt.Project] || {};
+
+      tt.billability = {
+        [BILLABILITY_TYPE.HOURS_REGISTERED]: 1,
+        [BILLABILITY_TYPE.HOURS_REGISTERED_BILLABLE_PROJECT]: project.Type === 4 ? 0 : 1,
+        [BILLABILITY_TYPE.HOURS_REGISTERED_BILLABLE_PROJECT_NOT_OVERSPENT]:
+          project.Type === 4 ? 0 : (tt.WithinBudget || 0),
+        [BILLABILITY_TYPE.HOURS_REGISTERED_BILLABLE_PROJECT_TYPE_NOT_OVERSPENT]:
+          project.Type === 4 ? 0 : (
+            tt.WithinHourBudget === null
+              ?
+              (tt.WithinBudget || 0)
+              :
+              (tt.WithinHourBudget || 0)
+          ),
+      };
     });
 
     // Find all weeks
@@ -226,12 +250,6 @@ export default async function (req, res) {
           tt => tt.week === week && tt.Employee === employee.ID
         );
       });
-    });
-
-    const ProjectsById = {};
-
-    Projects.forEach((project) => {
-      ProjectsById[project.ID] = project;
     });
 
     Object.assign(data, { Employees, Projects: ProjectsById, Items, weeks });
