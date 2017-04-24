@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import Dropdown from 'react-toolbox/lib/dropdown';
 import Input from 'react-toolbox/lib/input';
 import ReactTable from 'react-table';
+import '!style!css!postcss!react-table/react-table.css'; // eslint-disable-line import/no-unresolved
 import { observer } from 'mobx-react';
-import PersonModal from '../PersonModal';
 import DashboardPage from '../DashboardPage';
 import { BILLABILITY_TYPE, GROUP_TYPES } from '../const';
 import data from '../data';
 import settings from '../settings';
-import '!style!css!postcss!react-table/react-table.css';
+import BillabilityNumber from './BillabilityNumber';
 import styles from './styles.css';
 
 const sum = arr => arr.reduce((p, c) => p + c, 0);
@@ -55,8 +55,6 @@ class Billability extends Component {
   render() {
     return (
       <DashboardPage>
-        {this.state.modal}
-
         <div className={styles.settings}>
           <Dropdown
             onChange={(value) => { settings.billabilityType = value; }}
@@ -135,14 +133,5 @@ class Billability extends Component {
   }
 
 }
-
-const BillabilityNumber = ({ row, value, aggregated }) => {
-  if (isNaN(value)) return null;
-  if (value === Infinity) return <span>∞</span>;
-
-  return (
-    <span>{(value * 100).toFixed(1)} %</span>
-  );
-};
 
 export default observer(Billability);
