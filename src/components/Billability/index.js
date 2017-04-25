@@ -15,6 +15,13 @@ const sum = arr => arr.reduce((p, c) => p + c, 0);
 
 class Billability extends Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      expandedRows: {},
+    };
+  }
+
   getGroup(employee) {
     const heads = ['José', 'Hans', 'Jeroen', 'Martine'];
     const name = employee.FullName.split(' ')[0];
@@ -88,6 +95,13 @@ class Billability extends Component {
           showPagination={false}
           pageSize={new Set(data.Employees.map(employee => this.getGroup(employee))).size}
           pivotBy={['group']}
+          onExpandRow={i => this.setState({
+            expandedRows: {
+              ...this.state.expandedRows,
+              [i]: !this.state.expandedRows[i],
+            },
+          })}
+          expandedRows={this.state.expandedRows}
           columns={[
             {
               header: 'Employee',
