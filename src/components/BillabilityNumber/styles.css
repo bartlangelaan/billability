@@ -1,0 +1,15 @@
+.tooltip {
+  max-width: 500px;
+}
+
+.tableRow td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
+  text-align: left;
+}
+
+td.right {
+  text-align: right;
+}

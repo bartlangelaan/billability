@@ -8,7 +8,7 @@ import DashboardPage from '../DashboardPage';
 import { BILLABILITY_TYPE, GROUP_TYPES } from '../const';
 import data from '../data';
 import settings from '../settings';
-import BillabilityNumber from './BillabilityNumber';
+import BillabilityNumber from '../BillabilityNumber/index';
 import styles from './styles.css';
 
 const sum = arr => arr.reduce((p, c) => p + c, 0);
@@ -111,7 +111,7 @@ class Billability extends Component {
                   id: `billability-${week}`,
                   accessor: employee =>
                     employee.billability[week][settings.billabilityType].billability,
-                  render: BillabilityNumber,
+                  render: (props) => (<BillabilityNumber {...props} week={week} />),
                   style: { textAlign: 'right', overflow: 'visible' },
                   aggregate: (_, employees) => (
                     sum(employees.map(employee =>
