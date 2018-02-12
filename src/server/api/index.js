@@ -44,7 +44,7 @@ router.get('/data', async (req, res) => {
 
   if (!data) {
     // Need to create data
-    return res.redirect('/refresh');
+    return res.redirect('/api/refresh');
   }
 
   const dataObject = data.toObject();
