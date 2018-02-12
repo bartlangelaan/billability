@@ -27,12 +27,16 @@ export const get = (url, accessToken) => new Promise((resolve, reject) => {
     null,
     (err, res) => {
       try {
-        if (err) throw new Error(err);
+        if (err) {
+          console.log(err);
+          throw new Error(err);
+        }
         const json = JSON.parse(res);
         resolve(json);
       } catch (error) {
         console.log('Failed getting data from ', url, 'in try', numTry);
         console.log(error);
+        console.log(res);
 
         // If we already tried 5 times, just reject. We failed.
         if (numTry >= 5) {
