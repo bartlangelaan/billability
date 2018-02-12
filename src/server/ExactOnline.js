@@ -13,8 +13,10 @@ const strategy = new passportExact.Strategy({
 });
 
 export { strategy };
-export const get = (url, accessToken) => new Promise((resolve, reject) =>
-  strategy._oauth2._request( // eslint-disable-line no-underscore-dangle
+export const get = (url, accessToken) => new Promise((resolve, reject) => {
+  let numTry = 0;
+
+  const tryIt = () => strategy._oauth2._request( // eslint-disable-line no-underscore-dangle
     'GET',
     url,
     {
@@ -24,14 +26,26 @@ export const get = (url, accessToken) => new Promise((resolve, reject) =>
     '',
     null,
     (err, res) => {
-      if (err) return reject(err);
       try {
+        if (err) throw new Error(err);
         const json = JSON.parse(res);
-        return resolve(json);
+        resolve(json);
       } catch (error) {
-        return reject(error);
+        console.log('Failed getting data from ', url, 'in try', numTry);
+        console.log(error);
+
+        // If we already tried 5 times, just reject. We failed.
+        if (numTry >= 5) {
+          reject(error);
+        } else {
+          // If we didn't try enough times yet, we should retry in 1, 8, 27 or 64 seconds.
+          numTry += 1;
+          setTimeout(tryIt, (numTry ** 3) * 1000);
+        }
       }
     }
-  )
-);
+  );
+
+  tryIt();
+});
 
